@@ -1,5 +1,6 @@
 import logging
 from typing import Optional
+from copy import deepcopy
 from pandas import DataFrame, Series
 
 from autogluon.features.generators import PipelineFeatureGenerator
@@ -61,7 +62,9 @@ class UpginiPipelineFeatureGenerator(PipelineFeatureGenerator):
         **kwargs,
     ):
         if api_key is not None and FeaturesEnricher is None:
-            raise ImportError("upgini is not installed. Please install it with: pip install 'autogluon.features[upgini]'")
+            raise ImportError(
+                "upgini is not installed. Please install it with: pip install 'autogluon.features[upgini]'"
+            )
         super().__init__(
             pre_generators=[],
             generators=generators,
@@ -75,7 +78,7 @@ class UpginiPipelineFeatureGenerator(PipelineFeatureGenerator):
         self.search_keys = search_keys
         self.eval_set = eval_set
 
-    def _fit_transform(self, X: DataFrame, y: Series = None, **kwargs):
+    def _fit_transform(self, X: DataFrame, y=None, **kwargs):
         if self.api_key is not None and y is not None:
             return self._fit_transform_upgini(X=X, y=y, **kwargs)
         else:
@@ -86,37 +89,43 @@ class UpginiPipelineFeatureGenerator(PipelineFeatureGenerator):
 
     def _fit_transform_upgini(self, X: DataFrame, y: Series, **kwargs):
         self._log(logging.INFO, "Fitting generators on train set...")
-        print(X.columns.tolist())
+        generators_old = deepcopy(self.generators)
         X_train, type_group_map_special = super()._fit_transform(X=X, y=y, **kwargs)
 
-        eval_transformed = None
-        if self.eval_set is not None:
-            eval_transformed = []
-            for i, eval_set in enumerate(self.eval_set):
-                self._log(logging.INFO, f"Transforming generators on eval set {i}...")
-                y_eval = eval_set[1]
-                X_eval = super()._transform(X=eval_set[0])
-                if y_eval is not None:
-                    X_eval.drop(columns=y_eval.name, errors="ignore", inplace=True)
-                eval_transformed.append((X_eval, y_eval))
+        try:
+            eval_transformed = None
+            if self.eval_set is not None:
+                eval_transformed = []
+                for i, eval_set in enumerate(self.eval_set):
+                    self._log(logging.INFO, f"Transforming generators on eval set {i}...")
+                    y_eval = eval_set[1]
+                    X_eval = super()._transform(X=eval_set[0])
+                    if y_eval is not None:
+                        X_eval.drop(columns=y_eval.name, errors="ignore", inplace=True)
+                    eval_transformed.append((X_eval, y_eval))
 
-        self._log(logging.INFO, "Fitting FeaturesEnricher...")
-        if FeaturesEnricher is None:
-            raise ImportError("upgini is not installed")
-        enricher = FeaturesEnricher(
-            search_keys=self.search_keys,
-            country_code=self.country_code,
-            api_key=self.api_key,
-        )
+            self._log(logging.INFO, "Fitting FeaturesEnricher...")
+            if FeaturesEnricher is None:
+                raise ImportError("upgini is not installed")
+            enricher = FeaturesEnricher(
+                search_keys=self.search_keys,
+                country_code=self.country_code,
+                api_key=self.api_key,
+            )
 
-        X_out = enricher.fit_transform(X_train, y, eval_set=eval_transformed, calculate_metrics=False)
-        type_group_map_special = {k: [c for c in v if c in X_out] for k, v in type_group_map_special.items()}
+            X_out = enricher.fit_transform(X_train, y, eval_set=eval_transformed, calculate_metrics=False)
+            type_group_map_special = {k: [c for c in v if c in X_out] for k, v in type_group_map_special.items()}
 
-        print(X_out.columns.tolist())
+            self.features_enricher = enricher
+            self._is_fit = True
 
-        self.features_enricher = enricher
+            return X_out, type_group_map_special
 
-        return X_out, type_group_map_special
+        except Exception as e:
+            self._is_fit = False
+            self.generators = generators_old
+
+            raise e
 
     def _transform(self, X: DataFrame) -> DataFrame:
         if self.api_key is None:
