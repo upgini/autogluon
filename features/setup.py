@@ -38,7 +38,7 @@ install_requires = (
 
 extras_require = {
     "upgini": [
-        "upgini==1.2.146a2",
+        "upgini==1.2.146a3",
     ],
 }
 
