@@ -361,7 +361,7 @@ class CatBoostModel(AbstractModel):
     def _get_default_resources(self):
         # only_physical_cores=True is faster in training
         num_cpus = ResourceManager.get_cpu_count(only_physical_cores=True)
-        num_gpus = 0
+        num_gpus = ResourceManager.get_gpu_count()
         return num_cpus, num_gpus
 
     @classmethod

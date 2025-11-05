@@ -130,10 +130,10 @@ hyperparameter_portfolio_zeroshot_2025_small = {
     ],
     "CAT": [
         {
-            "ag_args": {"priority": -5, "ag.num_gpus": 1},
+            "ag_args": {"priority": -5},
         },
         {
-            "ag_args": {"name_suffix": "_r51", "priority": -10, "ag.num_gpus": 1},
+            "ag_args": {"name_suffix": "_r51", "priority": -10},
             "boosting_type": "Plain",
             "bootstrap_type": "Bernoulli",
             "colsample_bylevel": 0.8771035272558,
@@ -149,7 +149,7 @@ hyperparameter_portfolio_zeroshot_2025_small = {
             "subsample": 0.809527841437,
         },
         {
-            "ag_args": {"name_suffix": "_r10", "priority": -12, "ag.num_gpus": 1},
+            "ag_args": {"name_suffix": "_r10", "priority": -12},
             "boosting_type": "Plain",
             "bootstrap_type": "Bernoulli",
             "colsample_bylevel": 0.8994502668431,
@@ -165,7 +165,7 @@ hyperparameter_portfolio_zeroshot_2025_small = {
             "subsample": 0.8705228845742,
         },
         {
-            "ag_args": {"name_suffix": "_r24", "priority": -15, "ag.num_gpus": 1},
+            "ag_args": {"name_suffix": "_r24", "priority": -15},
             "boosting_type": "Plain",
             "bootstrap_type": "Bernoulli",
             "colsample_bylevel": 0.8597809376276,
@@ -181,7 +181,7 @@ hyperparameter_portfolio_zeroshot_2025_small = {
             "subsample": 0.8120271122061,
         },
         {
-            "ag_args": {"name_suffix": "_r91", "priority": -17, "ag.num_gpus": 1},
+            "ag_args": {"name_suffix": "_r91", "priority": -17},
             "boosting_type": "Plain",
             "bootstrap_type": "Bernoulli",
             "colsample_bylevel": 0.8959275863514,
@@ -299,7 +299,7 @@ hyperparameter_portfolio_zeroshot_2025_small = {
     ],
     "XGB": [
         {
-            "ag_args": {"name_suffix": "_r171", "priority": -9, "ag.num_gpus": 1},
+            "ag_args": {"name_suffix": "_r171", "priority": -9},
             "colsample_bylevel": 0.9213705632288,
             "colsample_bynode": 0.6443385965381,
             "enable_categorical": True,
@@ -314,7 +314,7 @@ hyperparameter_portfolio_zeroshot_2025_small = {
             "subsample": 0.9656290596647,
         },
         {
-            "ag_args": {"name_suffix": "_r40", "priority": -18, "ag.num_gpus": 1},
+            "ag_args": {"name_suffix": "_r40", "priority": -18},
             "colsample_bylevel": 0.6377491713202,
             "colsample_bynode": 0.9237625621103,
             "enable_categorical": True,
