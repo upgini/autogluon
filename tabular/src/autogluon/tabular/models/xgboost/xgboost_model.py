@@ -322,7 +322,7 @@ class XGBoostModel(AbstractModel):
     def _get_default_resources(self):
         # only_physical_cores=True is faster in training
         num_cpus = ResourceManager.get_cpu_count(only_physical_cores=True)
-        num_gpus = ResourceManager.get_gpu_count()
+        num_gpus = 0
         return num_cpus, num_gpus
 
     def save(self, path: str = None, verbose=True) -> str:
